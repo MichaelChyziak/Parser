@@ -99,7 +99,6 @@ void Tokenizer::prepareNextToken(){
 				if (tokenLength == 0) { 
 					if (i == str->length())
 					{
-						tokenlenght
 						complete = true;
 						found = true;
 						// if this condition holds you have reached the end of string 
@@ -447,7 +446,26 @@ string Tokenizer::getNextToken() {
 	offset = offset + tokenLength;
 	//move to the new position to seek forward
 	tokenLength = 0;
-	//reset token lengh
+	//reset token length
+
+
+	if (temp == "//") 
+	{
+    tokenLength =  (str -> length()) - offset;
+	return temp;
+	//if their is a comment on a line every character after is a comment
+	//block line case 
+	}
+
+	//if (temp == "/*") 
+	//{
+    //tokenLength =  (str -> length()) - offset;
+	//return temp;
+	//if their is a comment on a line every character after is a comment
+	//block line case 
+	//}
+
+
 	prepareNextToken();
 	//get next token length for next call to get next token
 	return temp;
