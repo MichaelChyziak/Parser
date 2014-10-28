@@ -41,7 +41,7 @@ void TokenList::append(Token *token) {
 //Removes the token from the linked list if it is not null
 //Deletes the token
 //On return from function, head, tail and the prev and next Tokens (in relation to the provided token) may be modified.
-void TokenList::deleteToken(Token *token) { //this will fail, it has no exit condition----------------------------------------
+void TokenList::deleteToken(Token *token) { 
 	if (token) {
 		if (head && tail) {
 			bool deleted = false;
@@ -57,6 +57,7 @@ void TokenList::deleteToken(Token *token) { //this will fail, it has no exit con
 					previous->setNext(temp);
 					temp->setPrev(previous);
 					delete destroy;
+					deleted = 1;
 				}
 				else {
 					temp = temp->getNext();
@@ -448,7 +449,7 @@ void Tokenizer::prepareNextToken(){
 		}
 	}
 
-		if( processingBlockComment == true) /////////////////////////////////////////////////////////////// need to cover case were you have a 1 line block comment
+		if( processingBlockComment == true) 
 	{
 		// this statement gets executed upon hitting a block comment entry term
 		// this will run in every call to get parser till you find a block exit
@@ -479,7 +480,7 @@ void Tokenizer::prepareNextToken(){
 	    // this statement gets executed if your block comment goes over one line
 		tokenLength = str->length() - offset;
 		}
-	}////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
 
 
 
