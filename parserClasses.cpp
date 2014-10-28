@@ -89,11 +89,13 @@ void Tokenizer::prepareNextToken(){
 		if (!complete) {
 			//while loop is not complete keep searching till you hit a character and you determine lengh from offset
 			bool found = false;
+			
 			int i = offset;
 			// set incrementing index equal to the offset position in string
 			while (!found && i < str->length())
 			{ // while you have not found a specified character or your string index has not gone out of the string size keep searching
 				switch (str->at(i)) {
+				case '/n':
 				case ' ':
 				case '\t':
 					//the white space character has been reached and there for the characters before it should be a token
@@ -317,7 +319,7 @@ void Tokenizer::prepareNextToken(){
 					found = true;
 					break;
 					//includes cases where I find {|,||,|=}
-				case '.':
+				case '.':     //// what about filename.name
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
 						tokenLength = 1;
@@ -351,21 +353,28 @@ void Tokenizer::prepareNextToken(){
 					//includes cases where I find {,}
 				case '>':
 					tokenLength = i - offset;
+
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if (str->at(i + 1) == '=') {
-						tokenLength = 2;
-						found = true;
-					}
-					if ( (str->at(i + 1) == '>') & (str->at(i + 2) == '=')){
-						tokenLength = 3;
-						found = true;
-					}
-					if (str->at(i + 1) == '>') {
-						tokenLength = 2;
-						found = true;
-					}
+						if ( i+2 <= str ->length()) 
+						{// making sure I will not read outside of the string 
+							if (str->at(i + 1) == '=') {
+								tokenLength = 2;
+								found = true;
+							}
+							
+							if ( (str->at(i + 1) == '>') & (str->at(i + 2) == '=')){
+								tokenLength = 3;
+								found = true;
+							}
+							
+
+							if (str->at(i + 1) == '>') {
+								tokenLength = 2;
+								found = true;
+							}
+						}
 					found = true;
 					break;
 					//includes cases where I find {>, >= , >> , >>=}
@@ -413,6 +422,21 @@ void Tokenizer::prepareNextToken(){
 					found = true;
 					break;
 					//includes cases where I find { } }
+				case '"':
+				tokenLength = i - offset;
+				    i++;
+				if (tokenLength == 0 ) {
+
+					while( str->at(i) != '"')
+					{
+						i++;
+					}
+					i++;
+					tokenLength = i - offset;
+				}
+				found = true;
+				break;
+				//includes cases where I find { "" }
 				default:
 					i++;
 					//by defult if non of these cases apply, increment by one till you either reach the end of the string or you find a specified character
