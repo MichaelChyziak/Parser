@@ -136,6 +136,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find { &, &= , &&}
 				case '*':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -151,6 +152,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find { *= , */}
 				case '!':
 					tokenLength = i - offset;
 					if (str->at(i + 1) == '=') {
@@ -158,6 +160,7 @@ void Tokenizer::prepareNextToken(){
 						found = true;
 					}
 					break;
+					//includes cases where I find { !, != }
 				case '+':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -173,6 +176,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find { +, +=, ++ }
 				case '-':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -196,6 +200,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find { -, -=, ->, ->*, -- }
 				case '^':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -207,6 +212,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {^=, ^ }
 				case '=':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -218,6 +224,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {==, = }
 				case ';':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -225,6 +232,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {; }
 				case ':':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -236,6 +244,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {:,:: }
 				case '/':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -253,6 +262,7 @@ void Tokenizer::prepareNextToken(){
 						tokenLength = 2;
 						found = true;
 					}
+				    //includes cases where I find {/,/=,//,'/* }
 					found = true;
 					break;
 				case '#':
@@ -262,6 +272,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {#}
 				case '[':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -269,6 +280,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {[ }
 				case ']':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -276,6 +288,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find { ] }
 				case '%':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -287,6 +300,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {% , %= }
 				case '|':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -302,6 +316,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {|,||,|=}
 				case '.':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -313,6 +328,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {.,.*}
 				case '?':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -324,6 +340,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {?,?:}
 				case ',':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -331,6 +348,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {,}
 				case '>':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -350,6 +368,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {>, >= , >> , >>=}
 				case '<':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -369,6 +388,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {<,<= , <<= , <<}
 				case '~':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -376,6 +396,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find {~}
 				case '{':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -383,6 +404,7 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+						//includes cases where I find { { }
 				case '}':
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
@@ -390,8 +412,10 @@ void Tokenizer::prepareNextToken(){
 					}
 					found = true;
 					break;
+					//includes cases where I find { } }
 				default:
 					i++;
+					//by defult if non of these cases apply, increment by one till you either reach the end of the string or you find a specified character
 				}
 			}
 			if (i == str->length()) {
@@ -402,11 +426,16 @@ void Tokenizer::prepareNextToken(){
 
 		if( processingBlockComment == true) /////////////////////////////////////////////////////////////// need to cover case were you have a 1 line block comment
 	{
+		// this statement gets executed upon hitting a block comment entry term
+		// this will run in every call to get parser till you find a block exit
+		// it will keep all comments together BY LINE. 
+
 		bool found = false;
 		int i = offset;
 		int endblock = 0;
+		// This is to detect that 
 		while (!found && i+2 < str->length())
-		{
+		{ // this ends the loop if you are one index locations before the end because it is not possible to have a end block term with less then 2 spaces
 			if ( str-> at(i+1) == '*')
 			{
 				if( str-> at(i+2) == '/')
@@ -415,6 +444,7 @@ void Tokenizer::prepareNextToken(){
 					found = true;
 					processingBlockComment = false;
 					endblock = 1;
+					//this ends the loop and resets the flag, aswell as setting a flag that you hit a end block 
 				}
 			}
 			i++;
@@ -422,6 +452,7 @@ void Tokenizer::prepareNextToken(){
 
 		if( i+2 >= str->length() && endblock == 0)
 		{
+	    // this statement gets executed if your block comment goes over one line
 		tokenLength = str->length() - offset;
 		}
 	}////////////////////////////////////////////////////////////////////////////////////////////////////
