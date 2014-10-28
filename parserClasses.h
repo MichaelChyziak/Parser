@@ -3,7 +3,6 @@
 
 //Use only the string library DO NOT add any other libraries
 #include <string>
-
 using namespace std;
 
 //Declare your variables for storing delimiters here:
@@ -25,11 +24,14 @@ public:
 	//Copy constructor
 	Token(const Token& old_token) {
 		//TO DO
+
+
 	}
 
-	//Destructor
+	//Destructor that destroys next and prev pointers
 	~Token() {
-		//TO DO
+//		delete next;
+//		delete prev;
 	}
 
 	//overriden = operator;
@@ -41,32 +43,32 @@ public:
 	Token(const string &stringRep) : next(NULL), prev(NULL), stringRep(stringRep) { }
 
 	//Returns the Token's *next member 
-	Token* getNext() const { 
+	Token* getNext() const {
 		return next;
 	}
 
 	//Sets the Token's *next member
-	void setNext(Token* next) { 
+	void setNext(Token* next) {
 		this->next = next;
 	}
 
 	//Returns the Token's *prev member 
-	Token* getPrev() const { 
+	Token* getPrev() const {
 		return prev;
 	}
 
 	//Sets the Token's *prev member
-	void setPrev(Token* prev){ 
+	void setPrev(Token* prev){
 		this->prev = prev;
 	}
 
 	//Returns a reference to the Token's stringRep member variable
-	const string& getStringRep() const { 
+	const string& getStringRep() const {
 		return stringRep;
 	}
 
 	//Sets the token's stringRep variable
-	void setStringRep(const string& stringRep) { 
+	void setStringRep(const string& stringRep) {
 		this->stringRep = stringRep;
 	}
 };
@@ -86,9 +88,10 @@ public:
 		//TO DO
 	}
 
-	//Destructor
+	//Destructor that deletes the head and the tail pointers
 	~TokenList() {
-		//TO DO
+//		delete head;
+//		delete tail;
 	}
 
 	//overriden = operator;
@@ -97,12 +100,12 @@ public:
 	}
 
 	//Returns a pointer to the head of the list
-	Token* getFirst() const { 
+	Token* getFirst() const {
 		return head;
 	}
 
 	//Returns a pointer to the tail of the list
-	Token* getLast() const { 
+	Token* getLast() const {
 		return tail;
 	}
 
@@ -118,7 +121,7 @@ public:
 	//Removes the token from the linked list if it is not null
 	//Deletes the token
 	//On return from function, head, tail and the prev and next Tokens (in relation to the provided token) may be modified.
-	void deleteToken(Token *token); 
+	void deleteToken(Token *token);
 };
 
 //A class for tokenizing a string of C++  code into tokens
@@ -145,7 +148,7 @@ private:
 
 public:
 	//Default Constructor- YOU need to add the member variable initializers.
-	Tokenizer() { 
+	Tokenizer() {
 		processingInlineComment = false;
 		processingBlockComment = false;
 		processingIncludeStatement = false;
@@ -161,9 +164,9 @@ public:
 		//TO DO
 	}
 
-	//Destructor
+	//Destructor that deletes the str pointer
 	~Tokenizer() {
-		//TO DO
+//		delete str;
 	}
 
 	//overriden = operator;
@@ -177,7 +180,7 @@ public:
 	void setString(string *str);
 
 	//Returns true if all possible tokens have been extracted from the current string (string *str)
-	bool isComplete() const { 
+	bool isComplete() const {
 		return complete;
 	}
 
