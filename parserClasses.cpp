@@ -41,7 +41,7 @@ void TokenList::append(Token *token) {
 //Removes the token from the linked list if it is not null
 //Deletes the token
 //On return from function, head, tail and the prev and next Tokens (in relation to the provided token) may be modified.
-void TokenList::deleteToken(Token *token) {     //this will fail, it has no exit condition----------------------------------------
+void TokenList::deleteToken(Token *token) { //this will fail, it has no exit condition----------------------------------------
 	if (token) {
 		if (head && tail) {
 			bool deleted = false;
@@ -83,335 +83,352 @@ void Tokenizer::prepareNextToken(){
 		complete = true;
 		//if you are already at the end of the list return nothing
 	}
-	if (!complete) {
-	//while loop is not complete keep searching till you hit a character and you determine lengh from offset
-		bool found = false;
-		int i = offset;
-		// set incrementing index equal to the offset position in string
-		while (!found && i < str->length())
-		{ // while you have not found a specified character or your string index has not gone out of the string size keep searching
-			switch (str->at(i)) {
-			case ' ':
-			case '\t':
-				//the white space character has been reached and there for the characters before it should be a token
-				tokenLength = i - offset;
-				found = true;
-				if (tokenLength == 0) { 
-					if (i == str->length())
-					{
-						complete = true;
+
+	if(processingBlockComment == false)
+	{
+		if (!complete) {
+			//while loop is not complete keep searching till you hit a character and you determine lengh from offset
+			bool found = false;
+			int i = offset;
+			// set incrementing index equal to the offset position in string
+			while (!found && i < str->length())
+			{ // while you have not found a specified character or your string index has not gone out of the string size keep searching
+				switch (str->at(i)) {
+				case ' ':
+				case '\t':
+					//the white space character has been reached and there for the characters before it should be a token
+					tokenLength = i - offset;
+					found = true;
+					if (tokenLength == 0) {
+						if (i == str->length())
+						{
+							complete = true;
+							found = true;
+							// if this condition holds you have reached the end of string
+						}
+						else {
+							offset++;
+							i++;
+							found = false;
+						}
+					}
+					break;
+				case '(':
+				case ')':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case '&':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
 						found = true;
-						// if this condition holds you have reached the end of string 
 					}
-					else {
-						offset++;
-						i++;
-						found = false;
+					if (str->at(i + 1) == '&') {
+						tokenLength = 2;
+						found = true;
 					}
-				}
-				break;
-			case '(':
-			case ')':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case '&':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
 					found = true;
-				}
-
-				if (str->at(i + 1) == '&') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				found = true;
-				break;
-			case '*':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
+					break;
+				case '*':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					if (str->at(i + 1) == '/') {
+						tokenLength = 2;
+						found = true;
+					}
 					found = true;
-				}
-				found = true;
-				break;
-			case '!':
-				tokenLength = i - offset;
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
+					break;
+				case '!':
+					tokenLength = i - offset;
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					break;
+				case '+':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					if (str->at(i + 1) == '+') {
+						tokenLength = 2;
+						found = true;
+					}
 					found = true;
-				}
-				break;
-			case '+':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
+					break;
+				case '-':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					if (str->at(i + 1) == '>') {
+						tokenLength = 2;
+						found = true;
+					}
+					if ( (str->at(i + 1) == '>') & (str->at(i + 2) == '*')){
+						tokenLength = 3;
+						found = true;
+					}
+					if (str->at(i + 1) == '-') {
+						tokenLength = 2;
+						found = true;
+					}
 					found = true;
-				}
-
-				if (str->at(i + 1) == '+') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				found = true;
-				break;
-			case '-':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
+					break;
+				case '^':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
 					found = true;
-				}
-				if (str->at(i + 1) == '>') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				if ( (str->at(i + 1) == '>')  &  (str->at(i + 2) == '*')){
-				tokenLength = 3;
-				found = true;
-				}
-
-				if (str->at(i + 1) == '-') {
-				tokenLength = 2;
-				found = true;
-				}
-				found = true;
-				break;
-			case '^':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-
-				if (str->at(i + 1) == '=') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				found = true;
-				break;
-			case '=':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
+					break;
+				case '=':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
 					found = true;
-				}
-				found = true;
-				break;
-			case ';':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case ':':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-
-				if (str->at(i + 1) == ':') {
-				tokenLength = 2;
-				found = true;
-				}
-				found = true;
-				break;
-			case '/':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-					tokenLength = 2;
+					break;
+				case ';':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
 					found = true;
-				}
-
-				if (str->at(i + 1) == '/') {
-					tokenLength = 2;
+					break;
+				case ':':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == ':') {
+						tokenLength = 2;
+						found = true;
+					}
 					found = true;
+					break;
+				case '/':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					if (str->at(i + 1) == '/') {
+						tokenLength = 2;
+						found = true;
+					}
+					if (str->at(i + 1) == '*') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case '#':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case '[':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case ']':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case '%':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case '|':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '|') {
+						tokenLength = 2;
+						found = true;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case '.':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '*') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case '?':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == ':') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case ',':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case '>':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					if ( (str->at(i + 1) == '>') & (str->at(i + 2) == '=')){
+						tokenLength = 3;
+						found = true;
+					}
+					if (str->at(i + 1) == '>') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case '<':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					if (str->at(i + 1) == '=') {
+						tokenLength = 2;
+						found = true;
+					}
+					if ( (str->at(i + 1) == '<') & (str->at(i + 2) == '=')){
+						tokenLength = 3;
+						found = true;
+					}
+					if (str->at(i + 1) == '<') {
+						tokenLength = 2;
+						found = true;
+					}
+					found = true;
+					break;
+				case '~':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case '{':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				case '}':
+					tokenLength = i - offset;
+					if (tokenLength == 0) {
+						tokenLength = 1;
+					}
+					found = true;
+					break;
+				default:
+					i++;
 				}
-
-				found = true;
-				break;
-			case '#':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case '[':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case ']':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case '%':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '=') {
-				tokenLength = 2;
-				found = true;
-				}
-				found = true;
-				break;
-			case '|':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-
-				if (str->at(i + 1) == '|') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				if (str->at(i + 1) == '=') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				found = true;
-				break;
-			case '.':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				if (str->at(i + 1) == '*') {
-				tokenLength = 2;
-				found = true;
-				}
-				found = true;
-				break;
-			case '?':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-
-				if (str->at(i + 1) == ':') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				found = true;
-				break;
-			case ',':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case '>':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-
-				if (str->at(i + 1) == '=') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				if ( (str->at(i + 1) == '>')  &  (str->at(i + 2) == '=')){
-				tokenLength = 3;
-				found = true;
-				}
-
-				if (str->at(i + 1) == '>') {
-				tokenLength = 2;
-				found = true;
-				}
-				found = true;
-				break;
-			case '<':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-
-				if (str->at(i + 1) == '=') {
-				tokenLength = 2;
-				found = true;
-				}
-
-				if ( (str->at(i + 1) == '<')  &  (str->at(i + 2) == '=')){
-				tokenLength = 3;
-				found = true;
-				}
-
-				if (str->at(i + 1) == '<') {
-				tokenLength = 2;
-				found = true;
-				}
-				found = true;
-				break;
-			case '~':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case '{':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-			case '}':
-				tokenLength = i - offset;
-				if (tokenLength == 0) {
-					tokenLength = 1;
-				}
-				found = true;
-				break;
-
-			default:
-				i++;
+			}
+			if (i == str->length()) {
+				tokenLength = str->length() - offset;
 			}
 		}
-		if (i == str->length()) {
-			tokenLength = str->length() - offset;
-		
-		}	
-		
 	}
+
+		if( processingBlockComment == true) /////////////////////////////////////////////////////////////// need to cover case were you have a 1 line block comment
+	{
+		bool found = false;
+		int i = offset;
+		int endblock = 0;
+		while (!found && i+2 < str->length())
+		{
+			if ( str-> at(i+1) == '*')
+			{
+				if( str-> at(i+2) == '/')
+				{
+					tokenLength = i - offset;
+					found = true;
+					processingBlockComment = false;
+					endblock = 1;
+				}
+			}
+			i++;
+		}
+
+		if( i+2 >= str->length() && endblock == 0)
+		{
+		tokenLength = str->length() - offset;
+		}
+	}////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 }
 //Sets the current string to be tokenized
 //Resets all Tokenizer state variables
@@ -421,7 +438,6 @@ void Tokenizer::setString(string *str) {
 		complete = true;
 		//if string is made of nothing make no string and return nothing
 	}
-
 	else { //average case : their are terms to tokenize in a string
 		complete = false;
 		offset = 0;
@@ -447,25 +463,20 @@ string Tokenizer::getNextToken() {
 	//move to the new position to seek forward
 	tokenLength = 0;
 	//reset token length
-
-
-	if (temp == "//") 
+	if (temp == "//")
 	{
-    tokenLength =  (str -> length()) - offset;
-	return temp;
-	//if their is a comment on a line every character after is a comment
-	//block line case 
+		tokenLength = (str -> length()) - offset;
+		return temp;
+		//if their is a comment on a line every character after is a comment
+		//inline case
 	}
-
-	//if (temp == "/*") 
-	//{
-    //tokenLength =  (str -> length()) - offset;
-	//return temp;
-	//if their is a comment on a line every character after is a comment
-	//block line case 
-	//}
-
-
+	if (temp == "/*")
+	{
+		processingBlockComment = true;
+		return temp;
+		//if a block comment gets started activate the processing block comment flag
+		//block line case
+	}
 	prepareNextToken();
 	//get next token length for next call to get next token
 	return temp;
