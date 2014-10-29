@@ -8,12 +8,13 @@ using namespace std;
 //Removes all inline comments from the tokenList including the // marker
 //Returns the number of comments removed
 //tokenList must be existing object
-int removeInlineComments(TokenList &tokenList) {\
+int removeInlineComments(TokenList &tokenList) {
 	int count = 0; //counts the amount of inline comments removed
 	Token* temp;
 	temp = tokenList.getFirst();
 	while (temp) {
 		if (temp->getStringRep() == "//") {
+			count++;
 			Token* destroy1;
 			destroy1 = temp;
 			if (temp->getNext() != NULL) {
@@ -37,7 +38,7 @@ int removeInlineComments(TokenList &tokenList) {\
 
 //Remove all block comments from the tokenList including /* and */ markers
 //Returns the number of block comments removed (where each pair of /* and */ count as one comment)
-int removeBlockComments(TokenList &tokenList) { 
+int removeBlockComments(TokenList &tokenList) {
 	int count = 0;
 	bool deleted = false;
 	Token* temp, *destroy;
@@ -47,12 +48,12 @@ int removeBlockComments(TokenList &tokenList) {
 			count++;
 			while (!deleted) {
 				destroy = temp;
-				temp = temp ->getNext();
+				temp = temp->getNext();
 				tokenList.deleteToken(destroy);
 				if (temp->getStringRep() == "*/") {
 					destroy = temp;
 					temp = temp->getNext();
-					deleted = true; 
+					deleted = true;
 					tokenList.deleteToken(destroy);
 				}
 			}
@@ -97,19 +98,19 @@ int main() {
 		tokens.append("\n");
 	}
 
-	removeInlineComments(tokens);
-	removeBlockComments(tokens);
+	cout << "Inline comments removed: " << removeInlineComments(tokens) << endl;
+	cout << "Block comments removed: " << removeBlockComments(tokens) << endl;
 
 	/*Test your tokenization of the file by traversing the tokens list and printing out the tokens*/
 	Token *t = tokens.getFirst();
-//	while (t) {
-//		cout << t->getStringRep() << endl;
-//		t = t->getNext();
-//	}
+	//	while (t) {
+	//		cout << t->getStringRep() << endl;
+	//		t = t->getNext();
+	//	}
 
 	for (int i = 0; t; i++) {
-		cout << "token" << i << ": " << t->getStringRep() << endl;
-		t = t->getNext(); 
+		cout << t->getStringRep() << " ";
+		t = t->getNext();
 	}
 	return 0;
 
