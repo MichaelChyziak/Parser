@@ -117,6 +117,7 @@ private:
 public:
 	//Default Constructor- YOU need to add the member variable initializers.
 	Tokenizer() {
+		//set all of the variables to initial values of false, 0, or Null
 		inlineFlag = false;
 		blockFlag = false;
 		complete = false;
