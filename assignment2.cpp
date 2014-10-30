@@ -11,13 +11,20 @@ using namespace std;
 int removeInlineComments(TokenList &tokenList) {
 	int count = 0; //counts the amount of inline comments removed
 	Token* temp;
+	//temp is going to be moved around the list looking for inline comments
 	temp = tokenList.getFirst();
+	//temp gets initialized to the first token in the list
 	while (temp) {
+		//this loop will run till you hit the end of the list (i.e NULL)
 		if (temp->getStringRep() == "//") {
 			count++;
+			//count as one inline comment to delete
 			Token* destroy1;
 			destroy1 = temp;
+			//make a token to use in destroying the //
 			if (temp->getNext() != NULL) {
+				//check to make sure you do not have a blank inline comment on the last line
+				//deletes the comment included in the inline comment
 				Token* destroy2;
 				destroy2 = temp->getNext();
 				temp = destroy2->getNext();
@@ -39,18 +46,23 @@ int removeInlineComments(TokenList &tokenList) {
 //Remove all block comments from the tokenList including /* and */ markers
 //Returns the number of block comments removed (where each pair of /* and */ count as one comment)
 int removeBlockComments(TokenList &tokenList) {
+	//this funtion deletes the block comments in the tokenlist
 	int count = 0;
 	bool deleted = false;
 	Token* temp, *destroy;
 	temp = tokenList.getFirst();
 	while (temp) {
+		//loop check if list is empty
+		deleted = false;
 		if (temp->getStringRep() == "/*") {
+			//upon finding a block entry comment you keep deleating tokens till you find the exit token
 			count++;
 			while (!deleted) {
 				destroy = temp;
 				temp = temp->getNext();
 				tokenList.deleteToken(destroy);
 				if (temp->getStringRep() == "*/") {
+					//once the exit block token is found stop delete looping and continue searching through the list for block entry symbols
 					destroy = temp;
 					temp = temp->getNext();
 					deleted = true;
@@ -59,7 +71,6 @@ int removeBlockComments(TokenList &tokenList) {
 			}
 		}
 		else {
-			int k = 1;
 			temp = temp->getNext();
 		}
 	}
