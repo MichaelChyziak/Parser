@@ -10,20 +10,24 @@
 //Appends this new token to the TokenList
 //On return from the function, it will be the last token in the list
 void TokenList::append(const string &str) {
+	//works when given a string to add to the bottom of the list
 	if (str.empty()) {
 		//do nothing if the given string is empty. Ignore it basically
 	}
 	else {
 		Token *temp;
 		temp = new Token(str);
+		//allocates memory to make new token in the list
 		if (tail) {
 			tail->next = temp;
 			temp->prev = tail;
 			tail = temp;
+			//inserts the token in the list the tail does not point to null and you have an empty list
 		}
 		else {
 			tail = temp;
 			head = temp;
+			//if you have and empty list then start the new list and appended token is the list
 		}
 	}
 }
@@ -31,6 +35,7 @@ void TokenList::append(const string &str) {
 //Appends the token to the TokenList if not null
 //On return from the function, it will be the last token in the list
 void TokenList::append(Token *token) {
+	//add a token to the bottom of the list when a empty list does not get passed in
 	if (token) {
 		Token * new_tail;
 		new_tail = token;
@@ -55,16 +60,19 @@ void TokenList::deleteToken(Token *token) {
 			delete temp;
 			head = NULL;
 			tail = NULL;
+			//case where you only have one token in a list
 		}
 		else if (token->getPrev() == NULL) {
 			head = head->getNext();
-			head->setPrev(nullptr);
+			head->setPrev(NULL);
 			delete temp;
+			//case where you are deleating the head of the list
 		}
 		else if (token->getNext() == NULL) {
 			tail = token->getPrev();
-			tail->setNext(nullptr);\
+			tail->setNext(NULL);\
 			delete temp;
+			//case where you are deleting the tail of the list
 		}
 		else {
 			after = token->getNext();
@@ -72,6 +80,7 @@ void TokenList::deleteToken(Token *token) {
 			before->setNext(after);
 			after->setPrev(before);
 			delete temp;
+			//case where you are deleting a token in the middle of the list
 		}
 	
 	}
@@ -90,38 +99,49 @@ void TokenList::deleteToken(Token *token) {
 void Tokenizer::prepareNextToken(){
 	if (offset == str->length()) {
 		complete = true;
+		//this is the case where you are at the end of the list
 	}
 	if (!complete) {
 		bool found = false;
 		int i = offset;
+		int length = str->length();
 		if (inlineFlag) {
-			tokenLength = str->length() - offset;
+		//this executes when the inline comment flag is thrown up
+			tokenLength = length - offset;
+		//you ALWAYS take the whole line after the // as a token 
 		}
 		else if(blockFlag) {
+			//you have a block processing flag thrown up since you found a /*
 			if (str->find("*/", i) == -1) {
-				tokenLength = str->length() - offset;
+				//this execute when find() returns a -1 , which is when you have a line without a block end
+				tokenLength = length - offset;
+				//if you do not find a */ in a line, after throwing up the flag then you take the whole line as a comment
 			}
 			else {
 				i = str->find("*/") - offset;
 				tokenLength = i;
+				//if you find a block end in a line then you you make everything up to a */ is a token 
 			}
 		}
 		else {
-			while (!found && i < str->length()) {
+			while (!found && i < length) {
 				switch (str->at(i)) {
 				case ' ':
 				case '\t':
+					//covers tabs and whitespace
 					tokenLength = i - offset;
 					found = true;
 					if (tokenLength == 0) {
-						if (i == str->length()){
+						if (i == length){
 							complete = true;
 							found = true;
+							//end of string condition, you hit the end of line and are thus complete
 						}
 						else {
 							offset++;
 							i++;
 							found = false;
+							//you should keep moving forward till you hit the a character of importance or you end
 						}
 					}
 					break;
@@ -138,11 +158,11 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && (str->at(i + 1) == '=')) {
+					if ((i < length - 1) && (str->at(i + 1) == '=') && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '&') {
+					if ((i < length - 1) && (str->at(i + 1) == '&') && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -151,13 +171,13 @@ void Tokenizer::prepareNextToken(){
 					//includes cases where I find { &, &= , &&}
 				case '*':
 					tokenLength = i - offset;
-					if ((i < str->length() - 1) && (str->at(i + 1) == '/') && tokenLength == 0) {
+					if ((i < length - 1) && (str->at(i + 1) == '/') && tokenLength == 0) {
 						tokenLength = 2;
 					}
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 					}
 					found = true;
@@ -167,18 +187,19 @@ void Tokenizer::prepareNextToken(){
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
 						tokenLength = 1;
+						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
 					break;
 					//includes cases where I find { !, != }
 				case '"':
-					while (i < str->length()-1 && str->at(i+1) != '"') {
+					while (i < length-1 && str->at(i+1) != '"') {
 						i++;
 					}
-					tokenLength = i + 2 - offset;
+					tokenLength = i + 2 - offset; 
 					found = true;
 					break;
 					//includes the case where anything between "..." is 1 token (including the quotation marks)
@@ -187,13 +208,16 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
-						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '+') {
+					if ((i < length - 1) && str->at(i + 1) == '+' && ((i - offset) == 0)) {
 						tokenLength = 2;
-						found = true;
+					}
+
+					if (2 <= (length) && ((i - offset) != 0) && (str->at(i - 1) == 'e' || str->at(i - 1) == 'E')) {
+						i++;
+						break;
 					}
 					found = true;
 					break;
@@ -203,22 +227,27 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '>') {
+					if ((i < length - 1) && str->at(i + 1) == '>' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 2) && (str->at(i + 1) == '>') & (str->at(i + 2) == '*')){
+					if ((i < length - 2) && (str->at(i + 1) == '>') & (str->at(i + 2) == '*') && ((i - offset) == 0)){
 						tokenLength = 3;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '-') {
+					if ((i < length - 1) && str->at(i + 1) == '-' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
+					if (2 <=  (length) && ((i - offset) != 0) && (str->at(i - 1) == 'e' || str->at(i - 1) == 'E')) {
+						found = false;
+						i++;
+						break;
+					} 
 					found = true;
 					break;
 					//includes cases where I find { -, -=, ->, ->*, -- }
@@ -227,7 +256,7 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -239,7 +268,7 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -259,7 +288,7 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == ':') {
+					if ((i < length - 1) && str->at(i + 1) == ':') {
 						tokenLength = 2;
 						found = true;
 					}
@@ -271,15 +300,15 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '/') {
+					if ((i < length - 1) && str->at(i + 1) == '/' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '*') {
+					if ((i < length - 1) && str->at(i + 1) == '*' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -315,7 +344,7 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && (str->at(i + 1) == '=') && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -327,11 +356,11 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '|') {
+					if ((i < length - 1) && str->at(i + 1) == '|' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -343,9 +372,14 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '*') {
+					if ((i < length - 1) && str->at(i + 1) == '*' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
+					}
+
+			        if ((i < length - 1) && ( str->at(i + 1) == '0' ||str->at(i + 1) == '1'||str->at(i + 1) == '2'||str->at(i + 1) == '3' || str->at(i + 1) == '4'   || str->at(i + 1) == '5'   || str->at(i + 1) == '6'     ||  str->at(i + 1) == '7'  || str->at(i + 1) == '8'   ||  str->at(i + 1) == '9')) {
+					    i++;
+						break;
 					}
 					found = true;
 					break;
@@ -355,7 +389,7 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == ':') {
+					if ((i < length - 1) && str->at(i + 1) == ':' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
@@ -375,25 +409,26 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 						found = true;
 					}
-					if ((i < str->length() - 2) && (str->at(i + 1) == '>') && (str->at(i + 2) == '=')){
+					if ((i < length - 1) && str->at(i + 1) == '>' && ((i - offset) == 0)) { 
+						tokenLength = 2;
+						found = true;
+					}
+					if ((i < length - 2) && (str->at(i + 1) == '>') && (str->at(i + 2) == '=') && ((i - offset) == 0)){
 						tokenLength = 3;
 						found = true;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '>') {
-						tokenLength = 2;
-						found = true;
-					}
+				
 					found = true;
 					break;
 					//includes cases where I find {>, >= , >> , >>=}
 				case '<':
 					tokenLength = i - offset;
 					if (includeFlag) {
-						while ((i < str->length() - 1) && (str->at(i + 1) != '>')) {
+						while ((i < length - 1) && (str->at(i + 1) != '>')) {
 							i++;
 						}
 						tokenLength = i + 2 - offset;
@@ -401,14 +436,16 @@ void Tokenizer::prepareNextToken(){
 					if (tokenLength == 0) {
 						tokenLength = 1;
 					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '=') {
+					if ((i < length - 1) && str->at(i + 1) == '=' && ((i - offset) == 0)) {
 						tokenLength = 2;
 					}
-					if ((i < str->length() - 2) && (str->at(i + 1) == '<') && (str->at(i + 2) == '=')){
+					
+					if ((i < length - 1) && str->at(i + 1) == '<' && ((i - offset) == 0)) {
+						tokenLength = 2;
+					}
+
+					if ((i < length - 2) && (str->at(i + 1) == '<') && (str->at(i + 2) == '=') && ((i - offset) == 0)){
 						tokenLength = 3;
-					}
-					if ((i < str->length() - 1) && str->at(i + 1) == '<') {
-						tokenLength = 2;
 					}
 					found = true;
 					break;
@@ -443,8 +480,8 @@ void Tokenizer::prepareNextToken(){
 				}
 			}
 		}
-		if (i == str->length()) {
-			tokenLength = str->length() - offset;
+		if (i == length) {
+			tokenLength = length - offset;
 		}
 	}
 }
@@ -454,10 +491,12 @@ void Tokenizer::prepareNextToken(){
 //Calls Tokenizer::prepareNextToken() as the last statement before returning.
 void Tokenizer::setString(string *str) {
 	if (str->length() == 0) {
+		//this is executed if a blank string is passed in 
 		includeFlag = false;
 		complete = true;
 	}
 	else {
+		//if the string has characters in it then you initialize some variables and prepare the next token for the get next token funtion 
 		includeFlag = false;
 		complete = false;
 		offset = 0;
@@ -494,6 +533,8 @@ string Tokenizer::getNextToken() {
 	}
 	if (blockFlag && offset < str->length()) {
 		blockFlag = false;
+		//turn off the block flag if it is on and your offsett is less then the length
+		//this means a */ has been found before the end of the line
 	}
 	if (temp == "/*")
 	{
@@ -503,12 +544,16 @@ string Tokenizer::getNextToken() {
 	}
 	if (hashFlag) {
 		hashFlag = false;
+		//flag is turned off but a include flag is turned on if the next token is include
+		//this is in anticipation of a <filename> or "filename"
 		if (temp == "include") {
 			includeFlag = true;
 		}
 	}
 	if (temp == "#") {
 		hashFlag = true;
+		//flag to set up special case for directive command 
+		//this is based upon whether the last token read in is a #
 	}
 	prepareNextToken();
 	//get next token length for next call to get next token
