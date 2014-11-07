@@ -4,7 +4,7 @@ Hello ENSC 251 classmates. If you wish to use our code feel free (giving proper 
 
 Cases Failed:
 -----
-stressTestB.cpp gives out 275 tokens instead of the posted 272 tokens, but another group has also gotten 275 so waiting on confirmation. However this is only the optional stress test and every other case both needed and optional was passed.
+Passes ALL of the cases sent to us for checking (both needed and optional).
 
 How to access the code:
 -----
