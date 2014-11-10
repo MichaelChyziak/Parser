@@ -23,5 +23,4 @@ The version number is located at the top of the file. If a version has beta besi
 1.1 -> COMING SOON...
 
     -> Fixes where "58." would be split into 2 tokens, but should be 1
-    
     -> Fixes where the append function in parserClasses.cpp with a token as a parameter now works for non-empty lists
