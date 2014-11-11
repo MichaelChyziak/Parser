@@ -47,7 +47,7 @@ void TokenList::append(Token *token) {
 
 
 	//add a token to the bottom of the list when a empty list does not get passed in
-	if (token) {
+	else if (token) {
 		Token * new_tail;
 		new_tail = token;
 		tail->next = new_tail;
