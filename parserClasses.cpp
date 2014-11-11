@@ -35,6 +35,17 @@ void TokenList::append(const string &str) {
 //Appends the token to the TokenList if not null
 //On return from the function, it will be the last token in the list
 void TokenList::append(Token *token) {
+	//add token to empty list and have head and tail now point to the new token
+	if (head == NULL && tail == NULL) {
+		Token * temp;
+		temp = token;
+		temp->setNext(NULL);
+		temp->setPrev(NULL);
+		head = temp;
+		tail = temp;
+	}
+
+
 	//add a token to the bottom of the list when a empty list does not get passed in
 	if (token) {
 		Token * new_tail;
@@ -45,7 +56,7 @@ void TokenList::append(Token *token) {
 		tail = new_tail;
 	}
 	else {
-		//token is NULL, do nothing
+		//token is invalid, do nothing
 	}
 }
 
@@ -367,6 +378,11 @@ void Tokenizer::prepareNextToken(){
 					tokenLength = i - offset;
 					if (tokenLength == 0) {
 						tokenLength = 1;
+					}
+					//FIXED CASE FOR "58.". Old case would split up "58" and "." into 2 tokens, but should be 1
+					if ((i > 0) && (i < length - 1) && (str->at(i + 1) == ' ' || str->at(i + 1) == '\n' || str->at(i + 1) == ';') && (str->at(i - 1) == '0' || str->at(i - 1) == '1' || str->at(i - 1) == '2' || str->at(i - 1) == '3' || str->at(i - 1) == '4' || str->at(i - 1) == '5' || str->at(i - 1) == '6' || str->at(i - 1) == '7' || str->at(i - 1) == '8' || str->at(i - 1) == '9')) {
+						i++;
+						break;
 					}
 					if ((i < length - 1) && str->at(i + 1) == '*' && ((i - offset) == 0)) {
 						tokenLength = 2;
