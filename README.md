@@ -28,3 +28,4 @@ The version number is located at the top of the file. If a version has beta besi
 1.2 -> Fixes made in "parserClasses.cpp"
 
     -> Adds the case where anything inside a character (ex 'a') is set as 1 token (including the single quotes)
+    -> Fixes another error where in some special cases "58." was 2 tokens instead of 1
